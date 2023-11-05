@@ -1,0 +1,47 @@
+<!-- inherit from base.html -->
+{% extends 'fitness_app/base_template.html' %}
+
+
+<!-- Replace block content in base_template.html -->
+
+{% block content %}
+<h1>Adi's Fitness App</h1>
+
+
+<h2>List of Active Users</h2>
+
+<style>
+    table {
+        width: 100%; /* Make the table fill the container */
+        border-collapse: collapse; /* Collapse cell borders */
+    }
+
+    td {
+        padding: 05px; /* Add padding to the cells */
+    }
+
+    /* Optional: Add margin between columns */
+    td + td {
+        margin-left: 05px;
+    }
+</style>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Detail</th>
+            </tr>
+        </thead>
+    <tbody>
+<ul class="list-group">
+    {% for i in user_detail %}
+    <tr>
+        <td>{{i.id}}</td>
+        <td>{{i.name}}</td>
+        <td><a class="btn btn-primary" href="{{ i.get_absolute_url }}" role="button">View Details</a></td>
+        </li>
+    </tr>
+    {% endfor %}
+</ul>
+{% endblock %}

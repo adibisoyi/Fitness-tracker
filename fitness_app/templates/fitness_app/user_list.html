@@ -1,0 +1,18 @@
+{% extends 'fitness_app/base_template.html' %}
+
+
+{% block content %}
+<h1>Users List</h1>
+    {% if user_list %}
+        <ul>
+            {% for user in user_list %}
+            <li>
+                <a> {{ user.name }}</a>
+                <a> {{ user.level }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p>There are no users currently.</p>
+    {% endif %}
+{% endblock %}
