@@ -1,4 +1,5 @@
-from django.urls import path
+from django.urls import include, path
+from django.contrib.auth import views as auth_views
 from . import views
 
 urlpatterns = [
@@ -10,7 +11,11 @@ urlpatterns = [
     path('', views.index, name='index'),
 
     path('user/', views.UsermatrixListView.as_view(), name= 'user'),
-    path('user/detail/<int:pk>', views.UserDetailView.as_view(), name='user-detail'),
+    # path('user/detail/<int:pk>', views.UserDetailView.as_view(), name='user-detail'),
     path('user/matrix/<int:pk>', views.UsermatrixDetailView.as_view(), name='user-matrix'),
+    path('accounts/profile' , views.loginUser, name= 'login'),
+    path('accounts/profile/user/<int:pk>' , views.userDetails, name= 'user-detail'),
+    path('accounts/register' , views.registerPage, name = 'register_page'),
+    path('accounts/profile/logout' , views.logoutUser, name= 'logout'),
 
 ]

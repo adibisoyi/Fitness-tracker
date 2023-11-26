@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import User as Usertable
 
 # Create your models here.
 
@@ -12,15 +13,16 @@ class User(models.Model):
     ('500', 'Intermediate'),
     ('1000', 'Pro'),
     )
-    name = models.CharField(max_length=200)
-    email = models.CharField("Email", max_length=200)
+    #name = models.CharField(max_length=200)
+    #email = models.CharField("Email", max_length=200)
+    user=models.OneToOneField(Usertable, on_delete=models.CASCADE, unique=True)
     level = models.CharField(max_length=200, choices=GOAL)
     #portfolio = models.OneToOneField(Portfolio, on_delete=models.CASCADE, unique=True)
 
 
     #Define default String to return the name for representing the Model object."
     def __str__(self):
-        return self.name
+        return self.user.username
 
 
     #Returns the URL to access a particular instance of MyModelName.
@@ -40,11 +42,11 @@ class User_matrix(models.Model):
     exercise_goal =  models.CharField(max_length=200)
     user_grade =  models.CharField(max_length=200)
     exercise_relaxation =  models.CharField(max_length=200)
-    Cuser = models.ForeignKey(User, on_delete=models.CASCADE, default = None)
+    Cuser = models.ForeignKey(Usertable, on_delete=models.CASCADE, default = None)
 
      #Define default String to return the name for representing the Model object."
     def __str__(self):
-        return self.Cuser.name
+        return self.Cuser.username
     
     #Returns the URL to access a particular instance of MyModelName.
     #if you define this method then Django will automatically

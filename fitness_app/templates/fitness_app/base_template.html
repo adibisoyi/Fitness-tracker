@@ -42,16 +42,38 @@
         </button>
         <div class="collapse navbar-collapse ml-auto" id="navbarNav">
           <ul class="navbar-nav">
+          
+            {% if not user.username %}
             <li class="nav-item">
-              <a class="nav-link" href="#">Login</a>
+              <a class="nav-link" href="{% url 'login' %}">Login</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">SignUp</a>
+              <a class="nav-link" href="{% url 'register_page' %}">SignUp</a>
             </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'user-detail' user.id %}">
+                {{ user.username }}
+              </a>
+            </li>
+
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li>
+            {% endif %}
           </ul>
         </div>
       </div>
     </nav>
+    <style>
+ body {
+        background-image: url("{% static 'images/Brand1.gif' %}");
+        background-size: cover;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+        color: #fff; /* Set text color to white */
+    }
+</style>
     <!-- Add block content from HTML template -->
     {% block content %}
     {% endblock %}
