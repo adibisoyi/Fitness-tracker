@@ -2,6 +2,50 @@
 
 
 {% block content %}
-<h1>User Name: {{ user_matrix.Cuser.name }}</h1>
-<p><strong>Grade:</strong> {{ user_matrix.user_grade }}</p>
+
+<style>
+</style>
+
+<div class="container">
+    <h1 class="text-center mt-4">User Details</h1>
+    <div class="card my-4">
+        <div class="card-body">
+            <h2>Name: {{ user_matrix.Cuser.username }}</h2>
+            <p><strong>Grade:</strong> {{ user_matrix.user_grade }}</p>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    // Add interactivity using jQuery
+    $(document).ready(function() {
+        // Change background color on hover
+        $('.card').hover(
+            function() {
+                $(this).css('background-color', '#23BD8C'); // Change to a gold color on hover
+            },
+            function() {
+                $(this).css('background-color', '#fff'); // Revert to white background
+            }
+        );
+
+        // Animate the header text
+        $('h1').animate({
+            fontSize: '32px', // Increase font size on load
+        }, 1000);
+    });
+</script>
+
+<style>
+    .card {
+        background-color: #fff; /* White background for the card */
+        border: 1px solid #ccc;
+        border-radius: 10px;
+    }
+
+    .card:hover {
+        cursor: pointer;
+    }
+</style>
 {% endblock %}
