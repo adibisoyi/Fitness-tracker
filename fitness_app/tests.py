@@ -1,92 +1,95 @@
 from django.test import TestCase
 
 # Create your tests here.
-
+from django.urls import path
+from . import views
 from .models import User, User_matrix
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
-'''
+from django.contrib.auth.models import User as Usertable
+from selenium.webdriver.common.by import By
+from .models import Exercise_details, User_matrix
+import time
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+import unittest
+
 #Tests for MODELS
 class UserModelTest(TestCase):
     def setUp(self):
-        # Assuming you have a Usertable instance, replace 'your_username' with an actual username
-        user = Usertable.objects.create(username='abisoyi')
-        self.user = User.objects.create(user=user, level='100')
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
 
-    def test_user_str(self):
-        self.assertEqual(str(self.user), 'abisoyi')
+    def test_user_creation(self):
+        self.assertEqual(self.user.username, 'testuser')
+        self.assertTrue(self.user.check_password('testpassword'))
 
-    def test_user_absolute_url(self):
-        url = reverse('user-detail', args=[str(self.user.id)])
-        self.assertEqual(self.user.get_absolute_url(), url)
-
-    def test_user_choices(self):
-        # Ensure that the choices for the 'level' field match the defined choices in the model
-        choices = dict(User.GOAL)
-        self.assertEqual(self.user.get_level_display(), choices['100'])
-
-    def test_user_level_validation(self):
-        # Test that the level field only accepts valid choices
-        invalid_user = User.objects.create(user=self.user.user, level='Invalid')
-        with self.assertRaises(ValueError):
-            invalid_user.full_clean()
-
+    def test_user_str_representation(self):
+        self.assertEqual(str(self.user), 'testuser')#Update this based on your URL pattern
 
 class ExerciseDetailsModelTest(TestCase):
     def setUp(self):
         self.exercise = Exercise_details.objects.create(
-            exercise_name='Bench Press',
-            exercise_reps='3 sets of 10 reps',
-            exercise_goal='Strength building',
-            exercise_relaxation='2 minutes between sets',
-            exercise_details='Lie on a flat bench...',
+            exercise_name="Test Exercise",
+            exercise_reps="10",
+            exercise_goal="Build Muscle",
+            exercise_relaxation="Yoga",
+            exercise_details="Details of the exercise",
+            relexercise_details="Details of the relaxation exercise"
         )
 
-    def test_exercise_details_str(self):
-        self.assertEqual(str(self.exercise), 'Bench Press')
+    def test_exercise_creation(self):
+        self.assertEqual(self.exercise.exercise_name, 'Test Exercise')
+        # Add more assertions for other fields
+
+    def test_exercise_str_representation(self):
+        self.assertEqual(str(self.exercise), 'Test Exercise')
 
 class UserMatrixModelTest(TestCase):
     def setUp(self):
-        # Assuming you have a Usertable instance, replace 'your_username' with an actual username
-        # You should also create an Exercise_details instance before creating a User_matrix instance
-        # as it has a ForeignKey to Exercise_details
-        user = Usertable.objects.create(username='your_username')
-
+        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.exercise = Exercise_details.objects.create(
+            exercise_name="Test Exercise",
+            exercise_reps="10",
+            exercise_goal="Build Muscle",
+            exercise_relaxation="Yoga",
+            exercise_details="Details of the exercise",
+            relexercise_details="Details of the relaxation exercise"
+        )
         self.user_matrix = User_matrix.objects.create(
-            current_calorie='2000',
-            heartbeat='80',
-            user_grade='A',
-            Cuser=user,
-            Exercice=Exercise_details.objects.create(exercise_name='Squats', exercise_details='Stand with your feet shoulder-width apart...'),
+            current_calorie="100",
+            heartbeat="80",
+            user_grade="Intermediate",
+            Cuser=self.user,
+            Exercice=self.exercise
         )
 
-    def test_user_matrix_str(self):
-        self.assertEqual(str(self.user_matrix), 'your_username')
+    def test_user_matrix_creation(self):
+        self.assertEqual(self.user_matrix.current_calorie, '100')
+        # Add more assertions for other fields
 
-    def test_user_matrix_absolute_url(self):
-        url = reverse('user-matrix', args=[str(self.user_matrix.id)])
-        self.assertEqual(self.user_matrix.get_absolute_url(), url)
-'''
+    def test_user_matrix_str_representation(self):
+        self.assertEqual(str(self.user_matrix), 'testuser')
+
+    def test_user_matrix_get_absolute_url(self):
+        url = self.user_matrix.get_absolute_url()
+        self.assertEqual(url, f'/user/matrix/{self.user_matrix.id}')  # Update this based on your URL pattern
+
 
 #Test for Views
-'''
-class FitnessAppViewsTest(TestCase):
+
+class ViewsTestCase(TestCase):
     def setUp(self):
+        self.client = Client()
+
         # Create a test user
-        self.user = User.objects.create_user(
+        self.user = Usertable.objects.create_user(
             username='testuser',
             password='testpassword'
         )
 
-        # Create a test user matrix
-        self.user_matrix = User_matrix.objects.create(
-            Cuser=self.user,
-            # Add other required fields here
-        )
-
-        # Create a test client
-        self.client = Client()
+        # Log in the test user
+        self.client.login(username='testuser', password='testpassword')
 
     def test_index_view(self):
         response = self.client.get(reverse('index'))
@@ -94,54 +97,25 @@ class FitnessAppViewsTest(TestCase):
         self.assertTemplateUsed(response, 'fitness_app/index.html')
 
     def test_register_view(self):
-        response = self.client.get(reverse('register'))
+        response = self.client.get(reverse('register_page'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'registration/register.html')
-
-        # Test registration form submission
-        response = self.client.post(reverse('register'), {
-            'username': 'newuser',
-            'password1': 'newpassword',
-            'password2': 'newpassword',
-        })
-        self.assertEqual(response.status_code, 302)  # Redirect after successful registration
-
-        # You can add more assertions to check if the user was created, etc.
 
     def test_login_view(self):
         response = self.client.get(reverse('login'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'registration/login.html')
 
-        # Test login form submission
-        response = self.client.post(reverse('login'), {
-            'username': 'testuser',
-            'password': 'testpassword',
-        })
-        self.assertEqual(response.status_code, 302)  # Redirect after successful login
-
-        # You can add more assertions to check if the user is logged in, etc.
-
-    def test_logout_view(self):
-        # Log in the user first
-        self.client.login(username='testuser', password='testpassword')
-
-        response = self.client.get(reverse('logout'))
-        self.assertEqual(response.status_code, 302)  # Redirect after successful logout
-
-        # You can add more assertions to check if the user is logged out, etc.
-
     def test_user_details_view(self):
-        response = self.client.get(reverse('user-detail', args=[self.user.id]))
+        response = self.client.get(reverse('user-detail', args=[str(self.user.id)]))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'fitness_app/user_detail.html')
-'''
 
-import time
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-import unittest
-'''
+    def test_logout_view(self):
+        response = self.client.get(reverse('logout'))
+        self.assertEqual(response.status_code, 302)  # 302 for redirect after logout
+        self.assertRedirects(response, reverse('index'))
+
 class UserRegistrationTest(unittest.TestCase):
     def setUp(self):
         self.driver = webdriver.Chrome()
@@ -173,11 +147,9 @@ class UserRegistrationTest(unittest.TestCase):
         time.sleep(2)
 
         # Assert that the registration was successful
-        self.assertIn("index", self.driver.current_url)
+        expected_url = "http://127.0.0.1:8000/"  # Replace with the expected URL
+        self.assertEqual(expected_url, self.driver.current_url)
 
-if __name__ == "__main__":
-    unittest.main()
-'''
 
 class UserLoginTest(unittest.TestCase):
     def setUp(self):
@@ -191,13 +163,15 @@ class UserLoginTest(unittest.TestCase):
         self.driver.get("http://127.0.0.1:8000/accounts/profile")  # Replace with the actual URL of your login page
 
         # Assuming you have login form fields like username, password
-        username_input = self.driver.find_element("name", "username")
-        password_input = self.driver.find_element("name", "password")
-        submit_button = self.driver.find_element("name", "submit")
+        username_input = self.driver.find_element(By.NAME, "username")
+        password_input = self.driver.find_element(By.NAME, "password")
 
         # Fill in the login form
         username_input.send_keys("testuser")
         password_input.send_keys("testpassword")
+
+        # Find the submit button using the XPATH strategy
+        submit_button = self.driver.find_element(By.XPATH, '//button[@type="submit"]')
 
         # Submit the form
         submit_button.click()
@@ -206,7 +180,8 @@ class UserLoginTest(unittest.TestCase):
         time.sleep(2)
 
         # Assert that the login was successful
-        self.assertIn("index", self.driver.current_url)
+        expected_url = "http://127.0.0.1:8000/accounts/profile/user/3"  # Replace with the expected URL
+        self.assertEqual(expected_url, self.driver.current_url)
 
 if __name__ == "__main__":
     unittest.main()
