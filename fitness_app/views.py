@@ -28,6 +28,7 @@ class UserDetailView(generic.DetailView):
 # Project Class Views
 class UsermatrixListView(generic.ListView):
     model = User_matrix
+
 class UsermatrixDetailView(generic.DetailView):
     model = User_matrix
 
@@ -35,7 +36,7 @@ class UsermatrixDetailView(generic.DetailView):
 
 def index(request):
 # Render index.html
-    user_detail = Usertable.objects.all()
+    user_detail = Usertable.objects.filter(is_superuser=0).all()
     matrix_detail = User_matrix.objects.all()
     print("active user query set", user_detail)
     print("other data queryset",matrix_detail)
@@ -52,8 +53,6 @@ def registerPage(request):
             new_user = authenticate(username=form.cleaned_data['username'],
                                     password=form.cleaned_data['password1'])
             login(request,new_user)
-            #username = form.cleaned_data.get('username')
-            #messages.success(request,'Account was created for' + User.name)
             return redirect('index')
     context={'form':form}
     return render(request,'registration/register.html',context)
@@ -73,7 +72,7 @@ def loginUser(request):
 def userDetails(request, pk):
     user = Usertable.objects.get(pk=pk)
     user_matrix = User_matrix.objects.filter(Cuser=user)
-    return render(request, "fitness_app/user_detail.html", {"user_matrix": user_matrix[0]})
+    return render(request, "fitness_app/user_detail.html", {"user_matrix": user_matrix})
 
 def logoutUser(request):
     logout(request)

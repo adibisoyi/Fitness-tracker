@@ -12,7 +12,7 @@ urlpatterns = [
 
     path('user/', views.UsermatrixListView.as_view(), name= 'user'),
     # path('user/detail/<int:pk>', views.UserDetailView.as_view(), name='user-detail'),
-    path('user/matrix/<int:pk>', views.UsermatrixDetailView.as_view(), name='user-matrix'),
+    path('user/matrix/<int:pk>', views.UserDetailView.as_view(), name='user-matrix'),
     path('accounts/profile' , views.loginUser, name= 'login'),
     path('accounts/profile/user/<int:pk>' , views.userDetails, name= 'user-detail'),
     path('accounts/register' , views.registerPage, name = 'register_page'),
