@@ -59,9 +59,7 @@ Contributions are welcome! To contribute:
 - Commit your changes (git commit -am 'Add new feature').
 - Push to the branch (git push origin feature/your-feature).
 - Create a new Pull Request.
-### License
-This project is licensed under the MIT License - see the LICENSE file for details.
 
-Acknowledgments
-Django for the robust web framework.
-Bootstrap for responsive design components.
+### Acknowledgments
+- Django for the robust web framework.
+- Bootstrap for responsive design components.
